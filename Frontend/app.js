@@ -1,5 +1,6 @@
 var apiUrl = 'http://localhost:8080/api/rules';
 
+// Create Rule
 document.getElementById('create-rule-form').addEventListener('submit', function(event) {
     event.preventDefault();
     var ruleString = document.getElementById('ruleString').value;
@@ -18,6 +19,7 @@ document.getElementById('create-rule-form').addEventListener('submit', function(
         });
 });
 
+// Fetch All Rules
 document.getElementById('fetch-rules').addEventListener('click', function() {
     axios.get(apiUrl + '/all')
         .then(function(response) {
@@ -34,6 +36,7 @@ document.getElementById('fetch-rules').addEventListener('click', function() {
         });
 });
 
+// Evaluate Rule
 document.getElementById('evaluate-rule').addEventListener('click', function() {
     var id = document.getElementById('evaluateId').value;
     var data = JSON.parse(document.getElementById('data').value);
@@ -45,5 +48,22 @@ document.getElementById('evaluate-rule').addEventListener('click', function() {
         .catch(function(error) {
             console.error('Error evaluating rule:', error);
             alert('Failed to evaluate rule');
+        });
+});
+
+// Combine Rules
+document.getElementById('combine-rules-button').addEventListener('click', function() {
+    var combineInput = document.getElementById('combineRulesInput').value;
+
+    axios.post(apiUrl + '/combine', null, {
+        params: { ruleString: combineInput }
+    })
+        .then(function(response) {
+            alert('Combined successfully!');
+            document.getElementById('combineRulesInput').value = ''; // Clear input field
+        })
+        .catch(function(error) {
+            console.error('Error combining rules:', error);
+            alert('Failed to combine rules');
         });
 });
