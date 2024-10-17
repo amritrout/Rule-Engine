@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Rule Engine</title>
+</head>
+<body>
+<div class="container">
+    <h1>Rule Engine</h1>
+
+    <h2>Create Rule</h2>
+    <form id="create-rule-form">
+        <input type="text" id="ruleString" placeholder="Enter rule string" required>
+        <input type="text" id="description" placeholder="Enter description" required>
+        <button type="submit">Create Rule</button>
+    </form>
+
+    <h2>All Rules</h2>
+    <button id="fetch-rules">Fetch All Rules</button>
+    <ul id="rules-list"></ul>
+
+    <h2>Evaluate Rule</h2>
+    <input type="number" id="evaluateId" placeholder="Rule ID" required>
+    <textarea id="data" placeholder="Enter data as JSON" required></textarea>
+    <button id="evaluate-rule">Evaluate Rule</button>
+    <div id="evaluation-result"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

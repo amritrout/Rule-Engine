@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Rule Engine.iml" filepath="$PROJECT_DIR$/.idea/Rule Engine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Backend/rule-engine/rule-engine.iml" filepath="$PROJECT_DIR$/Backend/rule-engine/rule-engine.iml" />
     </modules>
   </component>
 </project>
