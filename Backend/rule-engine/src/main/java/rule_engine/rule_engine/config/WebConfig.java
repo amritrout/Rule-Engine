@@ -1,4 +1,4 @@
-package rule_engine.rule_engine.config.config;
+package rule_engine.rule_engine.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
