@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rule_engine.rule_engine.models.Node;
 import rule_engine.rule_engine.models.Rule;
+import rule_engine.rule_engine.parsers.RuleCombiner;
 import rule_engine.rule_engine.parsers.RuleParser;
 import rule_engine.rule_engine.repositories.RuleRepository;
 
@@ -25,16 +26,28 @@ public class RulesService {
         rule.setRuleString(ruleString);
         rule.setDescription(description);
 
-        // Convert the rule string to AST and store it in db
+        // Convert rule string to AST and store it
         Node ast = RuleParser.parseExpression(ruleString);
 
-        //use for Debugging
+        //for Debugging
         //System.out.println("AST Structure:");
+        //RuleParser.printAST(ast, 0);
 
-        RuleParser.printAST(ast, 0);
         rule.setAst(ast);
 
         return ruleRepository.save(rule);
+    }
+
+    public Rule combineRules(List<String> rules){
+        Rule rule=new Rule();
+        String combinedRule = RuleCombiner.combineRules(rules);
+        rule.setRuleString(combinedRule);
+
+
+        Node ast = RuleParser.parseExpression(combinedRule);
+        rule.setAst(ast);
+        return ruleRepository.save(rule);
+
     }
 
     public Optional<Rule> getRuleById(Long id) {

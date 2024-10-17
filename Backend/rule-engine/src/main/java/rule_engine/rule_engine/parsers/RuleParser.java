@@ -19,7 +19,7 @@ public class RuleParser {
     }
 
     // Handles OR expressions first - lowest precedence
-    // e.g., "a && b || c && d" -> splits on the ||
+    // example-"a && b || c && d" -> splits on the ||
     private static Node parseOrExpression(String expr) {
         int idx = findOperator(expr, "||");
         if (idx != -1) {

@@ -27,6 +27,14 @@ public class RuleController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create rule", e);
         }
     }
+    @PostMapping("/combine")
+    public Rule combineRule(@RequestParam String ruleString) {
+        String[] ruleArr= ruleString.split(",");
+
+        List<String> ruleList =  Arrays.asList(ruleArr);
+
+        return rulesService.combineRules(ruleList);
+    }
 
 
     @GetMapping("/{id}")
