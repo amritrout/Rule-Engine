@@ -1,8 +1,8 @@
 package rule_engine.rule_engine.parsers;
-
 import lombok.Getter;
-
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class Condition {
     @Getter
@@ -130,6 +130,7 @@ class Rule {
 public class RuleCombiner {
 
     public static String combineRules(List<String> ruleStrings) {
+        ruleStrings = new ArrayList<>(splitConditions(ruleStrings));
         List<Rule> rules = new ArrayList<>();
         for (String ruleString : ruleStrings) {
             rules.add(new Rule(ruleString));
@@ -212,16 +213,33 @@ public class RuleCombiner {
         return result.toString();
     }
 
+    public static List<String> splitConditions(List<String> inputList) {
+        List<String> result = new ArrayList<>();
+        Pattern pattern = Pattern.compile("\\(([^()]+)\\)");
+
+        for (String inputString : inputList) {
+            Matcher matcher = pattern.matcher(inputString);
+
+            while (matcher.find()) {
+                String condition = matcher.group(1);
+                condition = condition.replaceAll("^\\(|\\)$", "").trim();
+                result.add("(" + condition + ")");
+            }
+        }
+
+        return result;
+    }
+
     /*
     public static void main(String[] args) {
-        List<String> rules = Arrays.asList(
-                "(age > 30 AND department = 'Sales')",
-                "(age < 25 AND department = 'Marketing')",
-                "(salary > 50000 OR experience > 5)",
-                "(job_title = 'Manager' OR job_title = 'Developer')"
-        );
+        List<String> inputList = new ArrayList<>();
+        inputList.add("((age > 30 AND department = 'Sales') OR (age < 25 AND department = 'Marketing'))");
+        inputList.add("(salary > 50000 OR experience > 5)");
+        inputList.add("(age > 30 AND department = 'Marketing')");
+        inputList.add("(name = 'John' AND email = 'john@example.com')");
+        inputList.add("((name = 'Jane' AND email = 'jane@example.com'))");
 
-        String combinedRule = combineRules(rules);
+        String combinedRule = combineRules(inputList);
         System.out.println("Combined rule: " + combinedRule);
     }*/
 }
