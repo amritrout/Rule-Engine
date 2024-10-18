@@ -23,18 +23,23 @@ public class RuleController {
             System.out.println("Received description: " + description);
             return rulesService.createRule(ruleString, description);
         } catch (Exception e) {
-            System.err.println("Error creating rule: " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create rule", e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
+
     @PostMapping("/combine")
     public Rule combineRule(@RequestParam String ruleString) {
-        String[] ruleArr= ruleString.split(",");
+        try {
+            String[] ruleArr = ruleString.split(",");
+            List<String> ruleList = Arrays.asList(ruleArr);
 
-        List<String> ruleList =  Arrays.asList(ruleArr);
-
-        return rulesService.combineRules(ruleList);
+            return rulesService.combineRules(ruleList);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to combine rules: " + e.getMessage(), e);
+        }
     }
+
+
 
 
     @GetMapping("/{id}")
@@ -49,10 +54,17 @@ public class RuleController {
 
     @PostMapping("/evaluate/{id}")
     public boolean evaluateRule(@PathVariable Long id, @RequestBody Map<String, Object> data) {
-        Optional<Rule> rule = rulesService.getRuleById(id);
-        if (rule.isPresent()) {
-            return rulesService.evaluateRule(rule.get(), data);
+        try {
+            Optional<Rule> rule = rulesService.getRuleById(id);
+            if (rule.isPresent()) {
+                return rulesService.evaluateRule(rule.get(), data);
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Rule with ID " + id + " not found");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error evaluating rule: " + e.getMessage(), e);
         }
-        return false;
     }
+
 }

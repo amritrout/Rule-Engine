@@ -15,7 +15,8 @@ document.getElementById('create-rule-form').addEventListener('submit', function(
         })
         .catch(function(error) {
             console.error('Error creating rule:', error);
-            alert('Failed to create rule');
+            const errorMessage = error.response ? error.response.data.message || error.response.data : 'Failed to create rule';
+            alert('Error: ' + errorMessage);
         });
 });
 
@@ -33,6 +34,8 @@ document.getElementById('fetch-rules').addEventListener('click', function() {
         })
         .catch(function(error) {
             console.error('Error fetching rules:', error);
+            const errorMessage = error.response ? error.response.data.message || error.response.data : 'Failed to fetch rules';
+            alert('Error: ' + errorMessage);
         });
 });
 
@@ -47,7 +50,8 @@ document.getElementById('evaluate-rule').addEventListener('click', function() {
         })
         .catch(function(error) {
             console.error('Error evaluating rule:', error);
-            alert('Failed to evaluate rule');
+            const errorMessage = error.response ? error.response.data.message || error.response.data : 'Failed to evaluate rule';
+            alert('Error: ' + errorMessage);
         });
 });
 
@@ -60,10 +64,11 @@ document.getElementById('combine-rules-button').addEventListener('click', functi
     })
         .then(function(response) {
             alert('Combined successfully!');
-            document.getElementById('combineRulesInput').value = ''; // Clear input field
+            document.getElementById('combineRulesInput').value = '';
         })
         .catch(function(error) {
             console.error('Error combining rules:', error);
-            alert('Failed to combine rules');
+            const errorMessage = error.response ? error.response.data.message || error.response.data : 'Failed to combine rules';
+            alert('Error: ' + errorMessage);
         });
 });
