@@ -326,6 +326,67 @@ Username: user123
 Password: root@password
 ```
 
+## Frontend Setup and Usage
+
+### Setup Instructions
+
+1. Ensure the Spring Boot backend is running (either locally or via Docker).
+2. Navigate to the frontend folder:
+   ```bash
+   cd path/to/frontend/folder
+   ```
+3. Open the `index.html` file in your web browser.
+
+### Frontend Interface
+
+![image](https://github.com/user-attachments/assets/940daad2-1660-45aa-924d-ebea19f21854)
+
+
+The frontend interface consists of four main sections:
+
+1. **Create Rule**
+2. **All Rules**
+3. **Evaluate Rule**
+4. **Combine Rules**
+
+### Usage Examples
+
+#### 1. Create Rule
+
+The create rule form takes two inputs:
+- Rule String
+- Description
+
+Example rule string:
+```
+((age > 30 AND department = 'Sales') OR (age < 25 AND department = 'Marketing')) AND (salary > 50000 OR experience > 5)
+```
+
+#### 2. Evaluate Rule
+
+To evaluate a rule, you need:
+- Rule ID
+- JSON format data
+
+Example JSON data:
+```json
+{
+  "age": 35,
+  "department": "Sales",
+  "salary": 60000,
+  "experience": 3
+}
+```
+
+#### 3. Combine Rules
+
+To combine rules, enter multiple rule strings separated by commas:
+
+Example:
+```
+((age > 30 AND department = 'Sales') OR (age != 25 AND department = 'Marketing')),(salary > 50000 OR experience > 5),(age > 30 AND department = 'Marketing')
+```
+
 ## API Endpoints
 
 ### Rule Management
