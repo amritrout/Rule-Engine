@@ -254,27 +254,20 @@ These design choices collectively contribute to a robust, flexible, and maintain
 
 1. Navigate to `src/main/resources/application.properties` and update MySQL credentials:
    ```properties
+   spring.datasource.url=jdbc:mysql://localhost:3306/your_DB_name
    spring.datasource.username=your_username
    spring.datasource.password=your_password
    ```
+2. Make a Database in MySQL:
+   ```bash
+   CREATE DATABASE your_DB_name;
+   ```
 
-2. Start the Spring Boot application:
+3. Start the Spring Boot application:
    ```bash
    mvn spring-boot:run
    ```
 </details>
-
-<summary>Building JAR</summary>
-
-Choose one of the following methods:
-
-```bash
-# Build with tests
-mvn clean install
-
-# Build without tests (for Docker)
-mvn clean install -DskipTests
-```
 
 ## Docker Deployment
 
