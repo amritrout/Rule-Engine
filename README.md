@@ -26,7 +26,17 @@ This rule would evaluate if a person is eligible based on:
 ## Design Choices
 
 <details>
-<summary>1. Node Class for AST Representation</summary>
+<summary>1. Database: Why MySQL?</summary>
+
+MySQL fits perfectly here because:
+- We need to store structured rule definitions consistently
+- The relational model works great for tracking rule relationships
+- It's easy to query and retrieve rules based on different criteria
+
+Plus, MySQL's transactional support ensures that our rule operations (create, update, delete) remain atomic and consistent.
+</details>
+<details>
+<summary>2. Node Class for AST Representation</summary>
 
 The `Node` class is a fundamental component of our Abstract Syntax Tree (AST) structure. It's designed to represent both operators and operands within a rule:
 
@@ -88,7 +98,7 @@ This approach strikes a balance between simplicity in representation and the abi
 
 
 <details>
-<summary>2. RuleParser: Comprehensive Rule Parsing</summary>
+<summary>3. RuleParser: Comprehensive Rule Parsing</summary>
 
 The `RuleParser` class is a crucial component of our Rule Engine, responsible for converting string-based rule expressions into Abstract Syntax Tree (AST) structures. Here are some key features and design choices:
 
@@ -140,7 +150,7 @@ This design allows for efficient parsing and evaluation of complex rule structur
 </details>
 
 <details>
-<summary>3. RuleCombiner: Efficient Rule Optimization</summary>
+<summary>4. RuleCombiner: Efficient Rule Optimization</summary>
 
 The `RuleCombiner` class is a sophisticated component designed to merge and optimize multiple rules. Its primary goal is to reduce redundancy and improve evaluation efficiency. Here are the key aspects of the RuleCombiner:
 
@@ -188,7 +198,7 @@ String combinedRule = RuleCombiner.combineRules(inputRules);
 </details>
 
 <details>
-<summary>4. Use of Lombok for Boilerplate Reduction</summary>
+<summary>5. Use of Lombok for Boilerplate Reduction</summary>
 
 We've utilized Lombok annotations (e.g., `@Data`) to reduce boilerplate code in model classes:
 
@@ -212,16 +222,7 @@ The system is designed to be easily extensible:
 </details>
 
 <details>
-<summary>7. Use of Regular Expressions for Parsing</summary>
-
-Regular expressions are employed for parsing conditions:
-
-- **Flexibility**: Allows for various formats of condition strings.
-- **Robustness**: Helps in validating and extracting components of a condition reliably.
-</details>
-
-<details>
-<summary>8. Immutable Rule Objects</summary>
+<summary>7. Immutable Rule Objects</summary>
 
 Rule objects are designed to be immutable:
 
@@ -230,7 +231,7 @@ Rule objects are designed to be immutable:
 </details>
 
 <details>
-<summary>9. Spring Boot Integration</summary>
+<summary>8. Spring Boot Integration</summary>
 
 The use of Spring Boot provides:
 
