@@ -2,6 +2,7 @@ package rule_engine.rule_engine.parsers;
 
 import org.springframework.stereotype.Component;
 import rule_engine.rule_engine.models.Node;
+
 import java.util.*;
 
 @Component
@@ -31,7 +32,7 @@ public class RuleParser {
         expr = expr.replace("AND", "&&").replace("OR", "||");
 
         try {
-            return parseOrExpression(expr); // Starting with OR since it has lower precedence
+            return parseOrExpression(expr); // Start with OR since it has lower precedence
         } catch (Exception e) {
             if (e instanceof InvalidRuleException || e instanceof InvalidConditionException) {
                 throw e;
@@ -41,6 +42,7 @@ public class RuleParser {
     }
 
     // Handles OR expressions first - lowest precedence
+    // e.g., "a && b || c && d" -> splits on the ||
     private static Node parseOrExpression(String expr) {
         int idx = findOperator(expr, "||");
         if (idx != -1) {
@@ -64,7 +66,8 @@ public class RuleParser {
         return parseCondition(expr);
     }
 
-    // Handles the basic conditions
+    // Handles the basic conditions - this is where the rubber meets the road
+    // Supports six types of comparisons: >, <, =, >=, <=, and !=
     private static Node parseCondition(String expr) {
         expr = expr.trim();
 
@@ -73,33 +76,27 @@ public class RuleParser {
             return parseExpression(expr.substring(1, expr.length() - 1));
         }
 
-        // Extract variable and validate it
         String variable = extractVariable(expr);
         if (!VALID_ATTRIBUTES.contains(variable)) {
             throw new InvalidConditionException("Invalid attribute: " + variable);
         }
 
-        // Parse and validate operator
         String operator = extractOperator(expr);
         if (!VALID_OPERATORS.get(variable).contains(operator)) {
             throw new InvalidConditionException("Invalid operator '" + operator + "' for variable '" + variable + "'");
         }
 
-        switch (operator) {
-            case "!=":
-            case "=":
-            case ">":
-            case "<":
-                String[] parts = expr.split(operator);
-                validateParts(parts, expr);
-                return new Node("operand", operator, parts[0].trim() + operator + parts[1].trim());
-            default:
-                throw new InvalidConditionException("Unsupported operator: " + operator);
-        }
+        // Not the prettiest code, but gets the job done
+        // Would be nice to refactor this into something more elegant someday
+        String[] parts = expr.split(operator, 2);
+        validateParts(parts, expr);
+
+        String value = parts[1].trim().replaceAll("^'|'$", "");  // Remove surrounding quotes if present
+        return new Node("operand", operator, variable + operator + value);
     }
 
     private static String extractVariable(String expr) {
-        for (String operator : Arrays.asList("!=", "=", ">", "<")) {
+        for (String operator : Arrays.asList("!=", ">=", "<=", "=", ">", "<")) {
             if (expr.contains(operator)) {
                 return expr.split(operator)[0].trim();
             }
@@ -109,6 +106,8 @@ public class RuleParser {
 
     private static String extractOperator(String expr) {
         if (expr.contains("!=")) return "!=";
+        if (expr.contains(">=")) return ">=";
+        if (expr.contains("<=")) return "<=";
         if (expr.contains("=")) return "=";
         if (expr.contains(">")) return ">";
         if (expr.contains("<")) return "<";
@@ -137,9 +136,11 @@ public class RuleParser {
     }
 
     // The main evaluation logic
+    // Takes our AST and a context map of variables and their values
     public static boolean evaluate(Node node, Map<String, Object> context) {
         if (node == null) return false;
 
+        // Handle the AND/OR operations
         if (node.type.equals("operator")) {
             switch (node.operator) {
                 case "AND":
@@ -151,29 +152,38 @@ public class RuleParser {
             }
         }
 
+        // Handle the actual comparisons
+        // Bit of a mess with the type casting, but it works for our use case
         if (node.type.equals("operand")) {
-            String[] parts = node.value.split(node.operator);
+            String[] parts = node.value.split(node.operator, 2);
             String variable = parts[0].trim();
             String value = parts[1].trim();
             validateContextVariable(variable, context);
 
             switch (node.operator) {
                 case ">":
-                    validateNumericOperation(variable, value);
-                    return (int) context.get(variable) > Integer.parseInt(value);
                 case "<":
+                case ">=":
+                case "<=":
                     validateNumericOperation(variable, value);
-                    return (int) context.get(variable) < Integer.parseInt(value);
+                    double contextValue = ((Number) context.get(variable)).doubleValue();
+                    double compareValue = Double.parseDouble(value);
+                    switch (node.operator) {
+                        case ">": return contextValue > compareValue;
+                        case "<": return contextValue < compareValue;
+                        case ">=": return contextValue >= compareValue;
+                        case "<=": return contextValue <= compareValue;
+                    }
                 case "=":
                     if (isNumericVariable(variable)) {
                         validateNumericOperation(variable, value);
-                        return (int) context.get(variable) == Integer.parseInt(value);
+                        return ((Number) context.get(variable)).doubleValue() == Double.parseDouble(value);
                     }
                     return context.get(variable).toString().equals(value);
                 case "!=":
                     if (isNumericVariable(variable)) {
                         validateNumericOperation(variable, value);
-                        return (int) context.get(variable) != Integer.parseInt(value);
+                        return ((Number) context.get(variable)).doubleValue() != Double.parseDouble(value);
                     }
                     return !context.get(variable).toString().equals(value);
                 default:
@@ -192,12 +202,12 @@ public class RuleParser {
 
     private static void validateNumericOperation(String variable, String value) {
         if (!isNumericVariable(variable)) {
-            throw new InvalidConditionException("Numeric operation not allowed for variable:" + variable);
+            throw new InvalidConditionException("Numeric operation not allowed for variable: " + variable);
         }
         try {
-            Integer.parseInt(value);
+            Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            throw new InvalidConditionException("Invalid integer value: " + value);
+            throw new InvalidConditionException("Invalid numeric value: " + value);
         }
     }
 
@@ -223,7 +233,6 @@ public class RuleParser {
 
     /* Keeping this commented out for now - good for testing though!
     public static void main(String[] args) {
-
         String rule = "((age > 30 AND department = 'Sales') OR (age < 25 AND department = 'Marketing')) "
                 + "AND (salary > 50000 OR experience > 5)";
 
@@ -241,7 +250,7 @@ public class RuleParser {
         try {
             boolean result = evaluate(ast, context);
             System.out.println("\nEvaluation Result: " + result);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
     }*/

@@ -39,6 +39,7 @@ public class RulesService {
     }
 
     public Rule combineRules(List<String> rules){
+        System.out.println(rules);
         Rule rule=new Rule();
         String combinedRule = RuleCombiner.combineRules(rules);
         rule.setRuleString(combinedRule);
