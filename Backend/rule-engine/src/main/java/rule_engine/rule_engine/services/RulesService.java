@@ -28,27 +28,20 @@ public class RulesService {
 
         // Convert rule string to AST and store it
         Node ast = RuleParser.parseExpression(ruleString);
-
-        //for Debugging
-        //System.out.println("AST Structure:");
-        //RuleParser.printAST(ast, 0);
-
         rule.setAst(ast);
 
         return ruleRepository.save(rule);
     }
 
-    public Rule combineRules(List<String> rules){
+    public Rule combineRules(List<String> rules) {
         System.out.println(rules);
-        Rule rule=new Rule();
+        Rule rule = new Rule();
         String combinedRule = RuleCombiner.combineRules(rules);
         rule.setRuleString(combinedRule);
-
 
         Node ast = RuleParser.parseExpression(combinedRule);
         rule.setAst(ast);
         return ruleRepository.save(rule);
-
     }
 
     public Optional<Rule> getRuleById(Long id) {
@@ -62,5 +55,13 @@ public class RulesService {
     public boolean evaluateRule(Rule rule, Map<String, Object> data) {
         Node ast = rule.getAst();
         return ruleParser.evaluate(ast, data);
+    }
+
+    public boolean deleteRuleById(Long id) {
+        if (ruleRepository.existsById(id)) {
+            ruleRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

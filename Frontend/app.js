@@ -2,7 +2,7 @@ var apiUrl = 'http://localhost:8080/api/rules';
 
 // Default examples for the create rule field
 document.getElementById('ruleString').value = "((age > 30 AND department = 'Sales') OR (age < 25 AND department = 'Marketing')) AND (salary > 50000 OR experience > 5)";
-document.getElementById('description').value = "This rule checks if an employee is older than 30 and works in the Sales department, or is younger than 25 and works in the Marketing department. Additionally, it checks if the salary is greater than 50,000 or if the employee has more than 5 years of experience.";
+document.getElementById('description').value = "Can leave this field empty";
 
 // Default examples for the evaluate field
 document.getElementById('data').value = JSON.stringify({
@@ -84,6 +84,22 @@ document.getElementById('combine-rules-button').addEventListener('click', functi
         .catch(function(error) {
             console.error('Error combining rules:', error);
             const errorMessage = error.response ? error.response.data.message || error.response.data : 'Failed to combine rules';
+            alert('Error: ' + errorMessage);
+        });
+});
+
+// Delete Rule
+document.getElementById('delete-rule-button').addEventListener('click', function() {
+    var id = document.getElementById('deleteId').value;
+
+    axios.delete(apiUrl + '/' + id)
+        .then(function(response) {
+            alert('Rule deleted successfully: ' + JSON.stringify(response.data));
+            document.getElementById('deleteId').value = '';
+        })
+        .catch(function(error) {
+            console.error('Error deleting rule:', error);
+            const errorMessage = error.response ? error.response.data.message || error.response.data : 'Failed to delete rule';
             alert('Error: ' + errorMessage);
         });
 });

@@ -39,9 +39,6 @@ public class RuleController {
         }
     }
 
-
-
-
     @GetMapping("/{id}")
     public Optional<Rule> getRule(@PathVariable Long id) {
         return rulesService.getRuleById(id);
@@ -67,4 +64,15 @@ public class RuleController {
         }
     }
 
+    
+    @DeleteMapping("/{id}")
+    public void deleteRule(@PathVariable Long id) {
+        try {
+            if (!rulesService.deleteRuleById(id)) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Rule with ID " + id + " not found");
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error deleting rule: " + e.getMessage(), e);
+        }
+    }
 }
