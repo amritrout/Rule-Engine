@@ -249,8 +249,15 @@ These design choices collectively contribute to a robust, flexible, and maintain
 - MySQL
 - Docker (optional)
 
-## Backend Setup & Configuration
+## Setup and Running
 
+Clone The Repo
+```bash
+   git clone https://github.com/amritrout/Rule-Engine
+   ```
+
+## Backend Setup & Configuration
+Note: If you prefer to set up the application using Docker, you can skip this section and proceed directly to the Docker Deployment section.
 <summary>Local Development</summary>
 
 1. Navigate to `src/main/resources/application.properties` and update MySQL credentials:
@@ -271,7 +278,7 @@ These design choices collectively contribute to a robust, flexible, and maintain
 </details>
 
 ## Docker Deployment
-
+Note: If you skipped the previous section, you can set up the application using Docker. Follow the steps below to deploy the application in a containerized environment.
 <summary>Quick Start</summary>
 
 The repository includes a pre-built JAR file for immediate Docker deployment.
