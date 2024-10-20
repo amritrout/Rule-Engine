@@ -340,7 +340,8 @@ Password: root@password
 
 ### Frontend Interface
 
-![image](https://github.com/user-attachments/assets/940daad2-1660-45aa-924d-ebea19f21854)
+![image](https://github.com/user-attachments/assets/6fd93147-0110-42a4-bec2-021926020861)
+
 
 
 The frontend interface consists of four main sections:
